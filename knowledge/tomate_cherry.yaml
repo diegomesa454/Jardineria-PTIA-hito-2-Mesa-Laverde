@@ -29,7 +29,7 @@ reglas_especificas:
     explicacion: Con calor intenso la planta puede soltar las flores; suele recuperarse cuando la temperatura baja.
 
   - id: T2
-    si: {humedad: [Seco], riego_hoy: [No]}
+    si: {humedad: [Seco], riego_hoy: ["No"]}
     causa_probable: riego irregular (riesgo de caída de flores y de podredumbre apical)
     acciones:
       - Regar de forma regular y evitar que el sustrato se seque por completo

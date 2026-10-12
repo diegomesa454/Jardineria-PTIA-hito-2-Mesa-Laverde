@@ -8,10 +8,10 @@ campos_reporte:
   humedad:      {tipo: ordinal,  valores: [Seco, Húmedo, Encharcado]}
   color_hojas:  {tipo: nominal,  valores: [Verde normal, Amarillas, Puntas marrones, Manchas]}
   turgencia:    {tipo: ordinal,  valores: [Firme, Caída leve, Marchita]}
-  riego_hoy:    {tipo: ordinal,  valores: [No, Poco, Suficiente, Exceso]}
+  riego_hoy:    {tipo: ordinal,  valores: ["No", Poco, Suficiente, Exceso]}
   horas_sol:    {tipo: numerico, unidad: h,  rango: [0, 12]}
   temperatura_c: {tipo: numerico, unidad: °C}
-  plagas:       {tipo: binario,  valores: [No, Sí]}
+  plagas:       {tipo: binario,  valores: ["No", Sí]}
 
 indice_estres:
   # Se suman los puntos de cada condición presente en el reporte.
