@@ -1,0 +1,54 @@
+# JardinerIA - Perfil de especie: albahaca (Ocimum basilicum)
+# Valores marcados con [F] provienen de las fuentes citadas; con [S] son
+# supuestos del equipo que se calibrarán con el simulador.
+
+especie: albahaca
+nombre_cientifico: Ocimum basilicum
+tipo: hierba aromática anual de clima cálido
+
+rangos:
+  temperatura_c:
+    optima: [18, 29]        # [F] 65-85 °F
+    tolerable: [10, 32]     # [S] límite inferior conservador; el daño por frío se reporta bajo ~4 °C (40 °F)
+    dano_por_frio_bajo: 4   # [F]
+  horas_sol:
+    optima: [6, 10]         # [S] el mínimo de 6 h es [F]
+    minimo: 6               # [F] ventana soleada, mínimo de 6 h de sol directo
+  humedad_sustrato:
+    optima: Húmedo          # [F] "le gusta el suelo húmedo", riego regular
+    seco_tolerado_dias: 1   # [S]
+  frecuencia_riego_referencia: riego frecuente en maceta; más frecuente que en tierra
+
+reglas_especificas:
+  - id: A1
+    si: {humedad: [Seco], turgencia: [Caída leve, Marchita], temperatura_c: {">": 29}}
+    causa_probable: calor con sustrato seco
+    acciones:
+      - Regar en la base y dar sombra parcial en las horas más calurosas
+    explicacion: La albahaca es de clima cálido pero con calor intenso consume agua rápido y se deshidrata.
+
+  - id: A2
+    si: {temperatura_c: {"<": 10}}
+    causa_probable: frío (planta sensible)
+    acciones:
+      - Llevar la planta a un lugar protegido y evitar corrientes de aire frío
+    explicacion: Es una especie sensible al frío; las hojas se dañan con temperaturas bajas.
+
+  - id: A3
+    si: {horas_sol: {"<": 6}}
+    causa_probable: luz insuficiente
+    acciones:
+      - Mover la maceta a la ventana o zona con más sol (mínimo 6 horas de sol directo)
+    explicacion: Con poca luz crece alargada y débil.
+
+  - id: A4
+    si: {color_hojas: [Manchas], humedad: [Encharcado, Húmedo]}
+    causa_probable: moho gris o manchas foliares por follaje mojado
+    acciones:
+      - Regar en la base sin mojar las hojas y retirar las hojas afectadas
+    explicacion: Las guías de extensión recomiendan mantener el follaje seco para reducir moho gris y manchas.
+
+fuentes:
+  - UC Master Gardeners, Santa Clara County (UC ANR). Basil. https://mgsantaclara.ucanr.edu/garden-help/herbs/basil
+  - University of Illinois Extension (Haag, B.). How to grow basil in your backyard. https://www.freshfruitportal.com/?p=448034
+  - Rango de temperatura 65-85 °F: guías de cuidado de albahaca, p. ej. https://getbusygardening.com/growing-basil/ (fuente no académica; verificar con guía de extensión)

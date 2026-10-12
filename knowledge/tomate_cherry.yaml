@@ -1,0 +1,56 @@
+# JardinerIA - Perfil de especie: tomate cherry (Solanum lycopersicum var. cerasiforme)
+# Valores marcados con [F] provienen de las fuentes citadas; con [S] son
+# supuestos del equipo que se calibrarán con el simulador.
+
+especie: tomate_cherry
+nombre_cientifico: Solanum lycopersicum var. cerasiforme
+tipo: hortaliza de fruto, clima cálido; se asume cultivo en maceta o contenedor
+
+rangos:
+  temperatura_c:
+    optima: [16, 29]        # [S] derivado de las guías: cuajado de fruto entre ~13 y 32 °C
+    tolerable: [13, 32]     # [F] cuajado de fruto entre 55 y 90 °F (UC ANR)
+    caida_flores_sobre: 32  # [F] algunas variedades pierden flores sobre 90 °F (~32 °C)
+    noche_ideal: [16, 21]   # [F] noche menor a ~16 °C o mayor a ~21 °C afecta el cuajado (OSU Extension)
+  horas_sol:
+    optima: [6, 10]         # [S] el mínimo de 6 h es [F]
+    minimo: 6               # [F] 6-8 horas de sol directo
+  humedad_sustrato:
+    optima: Húmedo          # [F] riego constante; nunca dejar secar por completo
+    seco_tolerado_dias: 0   # [F] no dejar secar el sustrato por completo entre riegos
+  frecuencia_riego_referencia: en maceta puede requerir riego diario; evitar mojar las hojas
+
+reglas_especificas:
+  - id: T1
+    si: {temperatura_c: {">": 32}}
+    causa_probable: calor excesivo (caída de flores)
+    acciones:
+      - Dar sombra en las horas de más calor y mantener el sustrato húmedo para bajar su temperatura
+    explicacion: Con calor intenso la planta puede soltar las flores; suele recuperarse cuando la temperatura baja.
+
+  - id: T2
+    si: {humedad: [Seco], riego_hoy: [No]}
+    causa_probable: riego irregular (riesgo de caída de flores y de podredumbre apical)
+    acciones:
+      - Regar de forma regular y evitar que el sustrato se seque por completo
+    explicacion: El riego irregular se asocia con caída de flores, frutos rajados y podredumbre apical.
+
+  - id: T3
+    si: {horas_sol: {"<": 6}}
+    causa_probable: luz insuficiente
+    acciones:
+      - Mover la maceta a un lugar con al menos 6 horas de sol directo
+    explicacion: Las guías recomiendan 6-8 horas de sol para que la planta produzca bien.
+
+  - id: T4
+    si: {color_hojas: [Puntas marrones], temperatura_c: {">": 32}}
+    causa_probable: exceso de sol y calor
+    acciones:
+      - Dar sombra parcial durante la tarde y regar con más regularidad
+    explicacion: El sol intenso y el calor pueden quemar las hojas y estresar la planta.
+
+fuentes:
+  - Iowa State University Extension. Growing Tomatoes in Containers. https://yardandgarden.extension.iastate.edu/how-to/growing-tomatoes-containers
+  - UC Cooperative Extension Master Gardeners (Tulare/Kings). General Tips for Growing Tomatoes. https://ucanr.edu/sites/mgfresno/files/361303.pdf
+  - Oklahoma State Extension. Tomato blossom drop (2021). https://extension.okstate.edu/programs/gardening/grow-gardening-columns/grow-columns-2021/june-20-2021-tomato-blossom-drop.html
+  - Alabama Cooperative Extension System. Blossom Drop in Tomato. https://www.aces.edu/wp-content/uploads/2021/01/ANR-2717_BlossomDropInTomato_061523L.pdf

@@ -20,7 +20,7 @@ y recomienda cuidados con explicación.
 
 ## Estado (Hito 2)
 - [x] Prototipo de interfaz navegable
-- [ ] Base de conocimiento (3 especies)
+- [x] Base de conocimiento (3 especies): ver knowledge/
 - [ ] Simulador y dataset
 - [ ] Modelo base (reglas vs. Random Forest)
 - [ ] Backend y MVP (Hito 3)

@@ -1,0 +1,78 @@
+# JardinerIA - Base de conocimiento: parámetros comunes a las tres especies
+# Alimenta: motor de reglas (6.4, componente 2) y etiquetado del simulador (6.5).
+# IMPORTANTE: los pesos y umbrales de este archivo son SUPUESTOS DEL EQUIPO
+# (no vienen de una guía agronómica). Se calibrarán con el simulador y los
+# 30 escenarios revisados manualmente.
+
+campos_reporte:
+  humedad:      {tipo: ordinal,  valores: [Seco, Húmedo, Encharcado]}
+  color_hojas:  {tipo: nominal,  valores: [Verde normal, Amarillas, Puntas marrones, Manchas]}
+  turgencia:    {tipo: ordinal,  valores: [Firme, Caída leve, Marchita]}
+  riego_hoy:    {tipo: ordinal,  valores: [No, Poco, Suficiente, Exceso]}
+  horas_sol:    {tipo: numerico, unidad: h,  rango: [0, 12]}
+  temperatura_c: {tipo: numerico, unidad: °C}
+  plagas:       {tipo: binario,  valores: [No, Sí]}
+
+indice_estres:
+  # Se suman los puntos de cada condición presente en el reporte.
+  puntos:
+    humedad_seco: 1
+    humedad_encharcado: 1
+    turgencia_caida_leve: 1
+    turgencia_marchita: 3
+    hojas_amarillas: 1
+    hojas_puntas_marrones: 1
+    hojas_manchas: 2
+    plagas_si: 1
+    temperatura_fuera_de_optima_pero_tolerable: 1
+    temperatura_fuera_de_tolerable: 2
+    sol_bajo_el_minimo: 1
+  estado:
+    Saludable: [0, 1]
+    Atención: [2, 3]
+    Crítico: [4, .inf]
+
+tendencia:
+  # Se compara el estado del día con el de 3 días después (6.5).
+  Mejora: "el índice de estrés baja al menos 1 punto"
+  Estable: "el índice de estrés cambia menos de 1 punto"
+  Empeora: "el índice de estrés sube al menos 1 punto"
+
+reglas_comunes:
+  - id: C1
+    si: {humedad: [Encharcado], color_hojas: [Amarillas]}
+    causa_probable: exceso de riego o drenaje deficiente
+    acciones:
+      - Suspender el riego hasta que la capa superior del sustrato se seque
+      - Verificar que la maceta tenga huecos de drenaje y que no quede agua acumulada en el plato
+    explicacion: Un sustrato encharcado deja las raíces sin oxígeno y las hojas amarillean.
+
+  - id: C2
+    si: {humedad: [Seco], turgencia: [Caída leve, Marchita]}
+    causa_probable: falta de agua
+    acciones:
+      - Regar de forma profunda hasta que salga agua por el fondo de la maceta
+      - Revisar el sustrato cada día durante la próxima semana
+    explicacion: Con el sustrato seco la planta pierde firmeza porque no puede reponer el agua que transpira.
+
+  - id: C3
+    si: {humedad: [Encharcado], turgencia: [Marchita]}
+    causa_probable: asfixia de raíces por exceso de agua
+    acciones:
+      - No regar más y mejorar el drenaje; si persiste, revisar el estado de las raíces
+    explicacion: Una planta marchita con el sustrato mojado suele indicar que las raíces no están funcionando, no que falte agua.
+
+  - id: C4
+    si: {color_hojas: [Manchas]}
+    causa_probable: hongos u hojas mojadas
+    acciones:
+      - Retirar las hojas afectadas y regar solo en la base, sin mojar el follaje
+    explicacion: Las manchas aparecen con frecuencia cuando las hojas permanecen húmedas (por ejemplo, manchas foliares o moho gris).
+
+  - id: C5
+    si: {plagas: [Sí]}
+    causa_probable: presencia de plagas
+    acciones:
+      - Revisar el envés de las hojas y retirar manualmente los insectos visibles
+      - Aislar la planta de otras si es posible
+    explicacion: Las plagas debilitan la planta; actuar temprano evita que se extiendan.

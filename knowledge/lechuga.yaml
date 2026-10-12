@@ -1,0 +1,55 @@
+# JardinerIA - Perfil de especie: lechuga de hoja (Lactuca sativa)
+# Valores marcados con [F] provienen de las fuentes citadas; con [S] son
+# supuestos del equipo que se calibrarán con el simulador.
+
+especie: lechuga
+nombre_cientifico: Lactuca sativa
+tipo: hortaliza de hoja de estación fresca (se considera lechuga de hoja)
+
+rangos:
+  temperatura_c:
+    optima: [10, 24]        # [F] 50-75 °F (UF/IFAS); Virginia Tech indica 60-70 °F como ideal
+    tolerable: [4, 29]      # [F] por debajo de ~4 °C (40 °F) hay riesgo por frío; sobre 29 °C (85 °F) conviene sombra
+    sombra_tarde_sobre: 29  # [F]
+  horas_sol:
+    optima: [4, 8]          # [S] "luz abundante"; tolera algo de sombra, sobre todo por la tarde en clima cálido
+    minimo: 4               # [S]
+  humedad_sustrato:
+    optima: Húmedo          # [F] suelo constantemente húmedo pero no encharcado
+    seco_tolerado_dias: 0   # [S] la sequedad acelera el espigado y el amargor
+  frecuencia_riego_referencia: riego frecuente y ligero; regar cuando los 2-3 cm superiores estén secos
+
+reglas_especificas:
+  - id: L1
+    si: {temperatura_c: {">": 24}}
+    causa_probable: calor (riesgo de amargor y espigado)
+    acciones:
+      - Dar sombra en la tarde y mantener el sustrato húmedo
+    explicacion: Con calor la lechuga se vuelve amarga y forma el tallo floral (espigado), que no se revierte.
+
+  - id: L2
+    si: {humedad: [Seco], temperatura_c: {">": 24}}
+    causa_probable: calor con sequedad (espigado acelerado)
+    acciones:
+      - Regar de inmediato y dar sombra parcial
+    explicacion: La falta de agua con calor acelera el espigado y el sabor amargo.
+
+  - id: L3
+    si: {color_hojas: [Puntas marrones], humedad: [Seco]}
+    causa_probable: riego irregular o sequedad
+    acciones:
+      - Regar de forma más uniforme, con riegos frecuentes y ligeros
+    explicacion: La humedad irregular causa quemadura de puntas en las hojas.
+
+  - id: L4
+    si: {temperatura_c: {"<": 4}}
+    causa_probable: riesgo de helada
+    acciones:
+      - Proteger la planta del frío durante la noche (cubrirla o entrarla)
+    explicacion: Tolera heladas ligeras, pero por debajo de ~4 °C conviene protegerla.
+
+fuentes:
+  - UF/IFAS Extension. Leaf Lettuce: Planting and Care. https://blogs.ifas.ufl.edu/leonco/2023/11/09/leaf-lettuce-planting-and-care/
+  - Virginia Tech Extension (Relf, D. y McDaniel, A.). Lettuce. https://pubs.ext.vt.edu/426/426-408/426-408.html
+  - Clemson HGIC. Lettuce. https://hgic.clemson.edu/factsheet/lettuce/
+  - University of Maryland Extension. Growing lettuce in the home garden. https://extension.umd.edu/resource/growing-lettuce-home-garden
