@@ -1,0 +1,7 @@
+numpy
+pandas
+scikit-learn
+pyyaml
+matplotlib
+jupyter
+# Hito 3: fastapi, uvicorn, tensorflow (Keras)

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>JardinerIA · Prototipo de interfaz</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --bg: #eef2ea; --surface: #ffffff; --surface2: #f4f7f1; --text: #1f2a1c; --muted: #5f6b5a;
+  --line: #d9e0d3; --brand: #2f6b3a; --brand-ink: #ffffff; --brand-soft: #e1efdc;
+  --ok: #2e7d32; --ok-bg: #e3f2e1; --warn: #a96a00; --warn-bg: #fff1d6; --bad: #b3261e; --bad-bg: #fde4e1;
+  --shadow: 0 2px 10px rgba(30,50,25,.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #11170f; --surface: #1a2217; --surface2: #222c1f; --text: #e8efe4; --muted: #a2b09c;
+    --line: #2f3b2b; --brand: #7fc48a; --brand-ink: #0f1a0d; --brand-soft: #25382a;
+    --ok: #86d18b; --ok-bg: #1f3522; --warn: #f0b955; --warn-bg: #3a2e14; --bad: #f2877f; --bad-bg: #3d1f1c;
+    --shadow: 0 2px 10px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #11170f; --surface: #1a2217; --surface2: #222c1f; --text: #e8efe4; --muted: #a2b09c;
+  --line: #2f3b2b; --brand: #7fc48a; --brand-ink: #0f1a0d; --brand-soft: #25382a;
+  --ok: #86d18b; --ok-bg: #1f3522; --warn: #f0b955; --warn-bg: #3a2e14; --bad: #f2877f; --bad-bg: #3d1f1c;
+  --shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body { margin: 0; background: var(--bg); color: var(--text); font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 16px; line-height: 1.4; min-height: 100vh; display: flex; justify-content: center; }
+button { font: inherit; color: inherit; cursor: pointer; }
+.app { width: 100%; max-width: 440px; min-height: 100vh; background: var(--surface2); display: flex; flex-direction: column;
+  position: relative; box-shadow: 0 0 40px rgba(0,0,0,.08); }
+.top { background: var(--brand); color: var(--brand-ink); padding: 14px 16px; display: flex; align-items: center; gap: 10px; position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; }
+.top h1 { font-size: 18px; margin: 0; flex: 1; }
+.top button { background: transparent; border: 0; color: inherit; font-size: 22px; padding: 2px 8px; border-radius: 8px; }
+.sim { background: var(--warn-bg); color: var(--warn); font-size: 12px; padding: 6px 14px; text-align: center; border-bottom: 1px solid var(--line); }
+main { flex: 1; padding: 16px 16px 90px; }
+h2 { font-size: 20px; margin: 4px 0 12px; }
+h3 { font-size: 15px; margin: 18px 0 8px; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 14px; box-shadow: var(--shadow); margin-bottom: 12px; }
+.plant { display: flex; gap: 12px; align-items: center; width: 100%; text-align: left; }
+.plant .em { font-size: 34px; width: 52px; height: 52px; display: grid; place-items: center; background: var(--brand-soft); border-radius: 14px; }
+.plant .info { flex: 1; min-width: 0; }
+.plant .name { font-weight: 700; }
+.plant .sub { color: var(--muted); font-size: 13px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; }
+.pill i { width: 9px; height: 9px; border-radius: 50%; background: currentColor; display: inline-block; }
+.s0 { background: var(--ok-bg); color: var(--ok); } .s1 { background: var(--warn-bg); color: var(--warn); } .s2 { background: var(--bad-bg); color: var(--bad); }
+.btn { display: block; width: 100%; padding: 14px; border-radius: 14px; border: 0; background: var(--brand); color: var(--brand-ink); font-weight: 700; text-align: center; }
+.btn.sec { background: var(--surface); color: var(--text); border: 1px solid var(--line); }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+.row { display: flex; gap: 8px; }
+.banner { display: flex; gap: 10px; align-items: center; background: var(--brand-soft); border: 1px solid var(--line); border-radius: 14px; padding: 12px; margin-bottom: 12px; width: 100%; text-align: left; }
+.field { margin-bottom: 18px; }
+.field label, .field .lbl { display: block; font-weight: 700; margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { padding: 12px 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); min-height: 48px; }
+.chip[aria-checked="true"] { border-color: var(--brand); background: var(--brand-soft); font-weight: 700; }
+.range { width: 100%; accent-color: var(--brand); height: 32px; }
+.val { float: right; font-weight: 700; color: var(--brand); }
+.progress { height: 6px; background: var(--line); border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+.progress div { height: 100%; background: var(--brand); transition: width .2s; }
+.big { text-align: center; padding: 18px 10px; }
+.big .em { font-size: 44px; }
+.big .state { font-size: 26px; font-weight: 800; margin: 6px 0; }
+.trend { display: flex; align-items: center; gap: 12px; }
+.trend .arrow { font-size: 30px; width: 48px; height: 48px; display: grid; place-items: center; border-radius: 12px; }
+.meter { height: 8px; background: var(--line); border-radius: 8px; overflow: hidden; margin-top: 6px; }
+.meter div { height: 100%; background: var(--brand); }
+.action { display: flex; gap: 12px; }
+.action .n { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); display: grid; place-items: center; font-weight: 800; flex: none; }
+details summary { cursor: pointer; color: var(--brand); font-weight: 600; margin-top: 6px; }
+.muted { color: var(--muted); font-size: 13px; }
+ul.plain { padding-left: 18px; margin: 6px 0; }
+.nav { position: fixed; bottom: 0; width: 100%; max-width: 440px; background: var(--surface); border-top: 1px solid var(--line);
+  display: flex; padding-bottom: env(safe-area-inset-bottom, 0px); z-index: 6; }
+.nav button { flex: 1; background: none; border: 0; padding: 10px 4px 8px; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; color: var(--muted); }
+.nav button .ic { font-size: 22px; }
+.nav button[aria-current="page"] { color: var(--brand); font-weight: 700; }
+.toast { background: var(--ok-bg); color: var(--ok); padding: 12px; border-radius: 12px; font-weight: 600; margin-bottom: 12px; }
+input[type=text] { width: 100%; padding: 14px; border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface); color: var(--text); font: inherit; }
+.hist { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.hist:last-child { border: 0; }
+.back { background: none; border: 0; color: var(--brand); font-weight: 700; padding: 0 0 8px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="top"><span aria-hidden="true">🌿</span><h1 id="ttl">JardinerIA</h1><button id="themeBtn" aria-label="Cambiar tema claro u oscuro">◐</button></div>
+  <div class="sim">Prototipo de interfaz · Hito 2 · los resultados son <b>simulados</b> con reglas sencillas; el modelo real llega en el Hito 3</div>
+  <main id="view" tabindex="-1"></main>
+  <nav class="nav" aria-label="Navegación principal">
+    <button data-go="plants" id="n-plants"><span class="ic" aria-hidden="true">🪴</span>Mis plantas</button>
+    <button data-go="report" id="n-report"><span class="ic" aria-hidden="true">📝</span>Reporte</button>
+    <button data-go="history" id="n-history"><span class="ic" aria-hidden="true">📈</span>Historial</button>
+  </nav>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // ---------- Datos simulados ----------
+  var SPECIES = {
+    albahaca: { name: 'Albahaca', em: '🌿', sun: 6, tmin: 18, tmax: 30 },
+    lechuga:  { name: 'Lechuga', em: '🥬', sun: 4, tmin: 10, tmax: 22 },
+    tomate:   { name: 'Tomate cherry', em: '🍅', sun: 6, tmin: 18, tmax: 30 }
+  };
+  var STATES = ['Saludable', 'Atención', 'Crítico'];
+  var TRENDS = { up: { t: 'Mejora', a: '↗', c: 's0' }, same: { t: 'Se mantiene estable', a: '→', c: 's1' }, down: { t: 'Empeora', a: '↘', c: 's2' } };
+  var plants = [
+    { id: 1, name: 'Mi albahaca', sp: 'albahaca', days: 12, hist: [0,0,0,1,1,1,1], pending: { predicted: 'down', answered: false } },
+    { id: 2, name: 'Lechuga del balcón', sp: 'lechuga', days: 20, hist: [0,0,0,0,0,0,0], pending: null },
+    { id: 3, name: 'Tomatico', sp: 'tomate', days: 35, hist: [1,1,2,2,1,1,2], pending: null }
+  ];
+  var nextId = 4, labels = 0;
+  var S = { screen: 'plants', pid: 1, report: blank(), result: null, toast: '' };
+
+  function blank() { return { hum: null, hoja: null, turg: null, riego: null, sol: 6, temp: 22, plaga: null }; }
+  function plant() { return plants.filter(function (p) { return p.id === S.pid; })[0]; }
+  function $(s) { return document.querySelector(s); }
+  function esc(t) { return String(t).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function pill(i) { return '<span class="pill s' + i + '"><i></i>' + STATES[i] + '</span>'; }
+
+  // ---------- "Modelo" simulado (reglas) ----------
+  function predict(p, r) {
+    var sp = SPECIES[p.sp], score = 0, why = [], acts = [];
+    if (r.hum === 'Seco') { score += 2; why.push('El sustrato está seco.'); }
+    if (r.hum === 'Encharcado') { score += 2; why.push('El sustrato está encharcado.'); }
+    if (r.hoja === 'Amarillas') { score += 2; why.push('Hojas amarillas.'); }
+    if (r.hoja === 'Puntas marrones') { score += 1; why.push('Puntas marrones en las hojas.'); }
+    if (r.hoja === 'Manchas') { score += 2; why.push('Manchas en las hojas.'); }
+    if (r.turg === 'Caída leve') { score += 1; why.push('Hojas con caída leve.'); }
+    if (r.turg === 'Marchita') { score += 3; why.push('La planta está marchita.'); }
+    if (r.sol < sp.sun) { score += 1; why.push('Recibe ' + r.sol + ' h de sol; ' + sp.name.toLowerCase() + ' prefiere al menos ' + sp.sun + ' h.'); }
+    if (r.temp < sp.tmin || r.temp > sp.tmax) { score += 1; why.push('La temperatura (' + r.temp + ' °C) está fuera del rango ideal (' + sp.tmin + '–' + sp.tmax + ' °C).'); }
+    if (r.plaga === 'Sí') { score += 2; why.push('Se ven plagas.'); }
+    if (r.riego === 'Exceso' && r.hum !== 'Seco') { score += 1; why.push('Se regó en exceso con el sustrato ya húmedo.'); }
+
+    // Acciones (máx. 2), con su explicación
+    if (r.hum === 'Encharcado' || (r.riego === 'Exceso' && r.hum !== 'Seco'))
+      acts.push({ t: 'Suspende el riego y deja drenar el sustrato', w: 'El exceso de agua asfixia las raíces y es una causa frecuente de hojas amarillas y marchitez.' });
+    if (r.hum === 'Seco' && (r.riego === 'No' || r.riego === 'Poco'))
+      acts.push({ t: 'Riega hoy hasta que el agua salga por el fondo de la matera', w: 'El sustrato seco y poco riego recientes indican que la planta no está recibiendo agua suficiente.' });
+    if (r.plaga === 'Sí')
+      acts.push({ t: 'Revisa el envés de las hojas y separa la planta de las demás', w: 'Las plagas se propagan rápido entre plantas cercanas; detectarlas pronto facilita controlarlas.' });
+    if (r.sol < sp.sun)
+      acts.push({ t: 'Muévela a un lugar con más luz', w: 'Con menos horas de sol de las que necesita, el crecimiento se debilita en pocos días.' });
+    if (r.temp > sp.tmax)
+      acts.push({ t: 'Dale sombra parcial en las horas más calientes', w: 'Temperaturas altas aumentan la pérdida de agua y el estrés de la planta.' });
+    if (!acts.length)
+      acts.push({ t: 'Mantén tu rutina actual de cuidados', w: 'Lo que reportaste está dentro de lo esperado para esta especie.' });
+    acts = acts.slice(0, 2);
+
+    var estado = score <= 1 ? 0 : (score <= 4 ? 1 : 2);
+    var prev = p.hist[p.hist.length - 1];
+    var trend = estado < prev ? 'up' : (estado > prev ? 'down' : 'same');
+    if (r.hum === 'Encharcado' && r.riego === 'Exceso') trend = 'down';
+    var conf = p.hist.length >= 5 ? 78 : 58;
+    if (!why.length) why.push('Todo lo reportado está dentro de los rangos esperados.');
+    return { estado: estado, trend: trend, conf: conf, why: why, acts: acts };
+  }
+
+  // ---------- Vistas ----------
+  function viewPlants() {
+    var h = '<h2>Mis plantas</h2>';
+    plants.forEach(function (p) {
+      if (p.pending && !p.pending.answered)
+        h += '<button class="banner" data-act="feedback" data-id="' + p.id + '"><span style="font-size:24px">🔔</span><span><b>1 pregunta pendiente</b><br><span class="muted">' + esc(p.name) + ': ¿se cumplió lo que te anunciamos?</span></span></button>';
+    });
+    plants.forEach(function (p) {
+      var sp = SPECIES[p.sp], st = p.hist[p.hist.length - 1];
+      h += '<button class="card plant" data-act="open" data-id="' + p.id + '"><span class="em" aria-hidden="true">' + sp.em + '</span><span class="info"><div class="name">' + esc(p.name) + '</div><div class="sub">' + sp.name + ' · día ' + p.days + '</div></span>' + pill(st) + '</button>';
+    });
+    h += '<button class="btn sec" data-act="addplant">＋ Agregar planta</button>';
+    return h;
+  }
+
+  function viewAdd() {
+    var h = '<button class="back" data-go="plants">← Volver</button><h2>Nueva planta</h2>';
+    h += '<div class="field"><label for="pn">Nombre</label><input id="pn" type="text" placeholder="Ej.: Mi tomate del patio" maxlength="30"></div>';
+    h += '<div class="field"><span class="lbl">Especie</span><div class="chips" role="radiogroup" aria-label="Especie">';
+    Object.keys(SPECIES).forEach(function (k, i) {
+      h += '<button class="chip" role="radio" aria-checked="' + (i === 0) + '" data-act="species" data-v="' + k + '">' + SPECIES[k].em + ' ' + SPECIES[k].name + '</button>';
+    });
+    h += '</div></div><button class="btn" data-act="saveplant">Guardar planta</button>';
+    return h;
+  }
+
+  function chips(field, label, opts) {
+    var h = '<div class="field"><span class="lbl">' + label + '</span><div class="chips" role="radiogroup" aria-label="' + label + '">';
+    opts.forEach(function (o) { h += '<button class="chip" role="radio" aria-checked="' + (S.report[field] === o) + '" data-act="set" data-f="' + field + '" data-v="' + o + '">' + o + '</button>'; });
+    return h + '</div></div>';
+  }
+
+  function viewReport() {
+    var p = plant(), r = S.report, sp = SPECIES[p.sp];
+    var done = ['hum', 'hoja', 'turg', 'riego', 'plaga'].filter(function (k) { return r[k] !== null; }).length;
+    var h = '';
+    if (S.toast) { h += '<div class="toast">' + S.toast + '</div>'; S.toast = ''; }
+    h += '<h2>Reporte de hoy</h2><p class="muted" style="margin-top:-6px">' + sp.em + ' ' + esc(p.name) + ' · menos de 1 minuto</p>';
+    h += '<div class="progress" aria-hidden="true"><div style="width:' + (done / 5 * 100) + '%"></div></div>';
+    h += chips('hum', '1. Humedad del sustrato', ['Seco', 'Húmedo', 'Encharcado']);
+    h += chips('hoja', '2. Color de las hojas', ['Verde normal', 'Amarillas', 'Puntas marrones', 'Manchas']);
+    h += chips('turg', '3. Turgencia', ['Firme', 'Caída leve', 'Marchita']);
+    h += chips('riego', '4. Riego realizado hoy', ['No', 'Poco', 'Suficiente', 'Exceso']);
+    h += '<div class="field"><label for="sol">5. Horas de sol <span class="val" id="solv">' + r.sol + ' h</span></label><input class="range" id="sol" type="range" min="0" max="12" value="' + r.sol + '" data-act="range" data-f="sol"></div>';
+    h += '<div class="field"><label for="tmp">6. Temperatura ambiente <span class="val" id="tmpv">' + r.temp + ' °C</span></label><input class="range" id="tmp" type="range" min="5" max="40" value="' + r.temp + '" data-act="range" data-f="temp"><div class="muted">Opcional en la versión final: se tomará del clima automáticamente.</div></div>';
+    h += chips('plaga', '7. ¿Ves plagas?', ['No', 'Sí']);
+    h += '<button class="btn" data-act="analyze"' + (done < 5 ? ' disabled' : '') + '>Ver estado y recomendaciones</button>';
+    if (done < 5) h += '<p class="muted" style="text-align:center">Completa los campos para continuar.</p>';
+    return h;
+  }
+
+  function viewResult() {
+    var p = plant(), x = S.result, t = TRENDS[x.trend], sp = SPECIES[p.sp];
+    var h = '<div class="card big"><div class="em" aria-hidden="true">' + sp.em + '</div><div class="muted">' + esc(p.name) + ' · hoy</div><div class="state" style="color:var(--' + ['ok', 'warn', 'bad'][x.estado] + ')">' + STATES[x.estado] + '</div></div>';
+    h += '<div class="card"><div class="trend"><div class="arrow ' + t.c + '" aria-hidden="true">' + t.a + '</div><div><div class="muted">Tendencia en los próximos 3 días</div><b style="font-size:18px">' + t.t + '</b></div></div>';
+    h += '<div style="margin-top:12px" class="muted">Confianza de la estimación: <b>' + x.conf + ' %</b></div><div class="meter" role="img" aria-label="Confianza ' + x.conf + ' por ciento"><div style="width:' + x.conf + '%"></div></div>';
+    if (x.conf < 70) h += '<div class="muted" style="margin-top:6px">Aún hay pocos reportes de esta planta; la confianza aumenta con el uso.</div>';
+    h += '</div><h3>Qué puedes hacer</h3>';
+    x.acts.forEach(function (a, i) {
+      h += '<div class="card action"><div class="n">' + (i + 1) + '</div><div><b>' + a.t + '</b><details><summary>¿Por qué?</summary><div class="muted" style="margin-top:6px">' + a.w + '</div></details></div></div>';
+    });
+    h += '<div class="card"><b>Lo que influyó en el resultado</b><ul class="plain muted">' + x.why.map(function (w) { return '<li>' + esc(w) + '</li>'; }).join('') + '</ul></div>';
+    h += '<p class="muted">JardinerIA solo recomienda: tú decides qué hacer con tu planta.</p>';
+    h += '<button class="btn" data-act="save">Guardar y ver historial</button>';
+    return h;
+  }
+
+  function chart(hist) {
+    var W = 360, H = 130, pad = 26, n = hist.length, step = n > 1 ? (W - pad * 2) / (n - 1) : 0;
+    var y = function (v) { return 20 + v * 42; };
+    var pts = hist.map(function (v, i) { return [pad + i * step, y(v)]; });
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" width="100%" role="img" aria-label="Evolución del estado en los últimos ' + n + ' días">';
+    ['Saludable', 'Atención', 'Crítico'].forEach(function (l, i) {
+      s += '<line x1="' + pad + '" x2="' + (W - 6) + '" y1="' + y(i) + '" y2="' + y(i) + '" stroke="var(--line)"/><text x="' + pad + '" y="' + (y(i) - 4) + '" font-size="9" fill="var(--muted)">' + l + '</text>';
+    });
+    s += '<polyline fill="none" stroke="var(--brand)" stroke-width="2.5" points="' + pts.map(function (p) { return p.join(','); }).join(' ') + '"/>';
+    pts.forEach(function (p, i) {
+      var c = ['var(--ok)', 'var(--warn)', 'var(--bad)'][hist[i]];
+      s += '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="5" fill="' + c + '"/><text x="' + p[0] + '" y="' + (H - 6) + '" font-size="9" text-anchor="middle" fill="var(--muted)">' + (i === n - 1 ? 'hoy' : '-' + (n - 1 - i)) + '</text>';
+    });
+    return s + '</svg>';
+  }
+
+  function viewHistory() {
+    var p = plant(), sp = SPECIES[p.sp];
+    var h = '<h2>Historial</h2><div class="chips" style="margin-bottom:12px">';
+    plants.forEach(function (q) { h += '<button class="chip" role="radio" aria-checked="' + (q.id === S.pid) + '" data-act="pick" data-id="' + q.id + '">' + SPECIES[q.sp].em + ' ' + esc(q.name) + '</button>'; });
+    h += '</div>';
+    if (S.toast) { h += '<div class="toast">' + S.toast + '</div>'; S.toast = ''; }
+    h += '<div class="card"><b>Evolución del estado</b><div class="muted">' + sp.name + ' · últimos ' + p.hist.length + ' reportes</div>' + chart(p.hist) + '</div>';
+    h += '<div class="card"><b>Reportes recientes</b>';
+    p.hist.slice().reverse().slice(0, 5).forEach(function (v, i) {
+      h += '<div class="hist"><span>' + (i === 0 ? 'Hoy' : 'Hace ' + i + (i === 1 ? ' día' : ' días')) + '</span>' + pill(v) + '</div>';
+    });
+    h += '</div>';
+    if (p.pending && !p.pending.answered) h += '<button class="btn sec" data-act="feedback" data-id="' + p.id + '">🔔 Responder pregunta pendiente</button>';
+    return h;
+  }
+
+  function viewFeedback() {
+    var p = plant();
+    var tr = TRENDS[p.pending.predicted].t.toLowerCase();
+    var h = '<button class="back" data-go="plants">← Volver</button><h2>Seguimiento</h2><div class="card"><p>Hace 3 días te anunciamos que <b>' + esc(p.name) + '</b> <b>' + tr + '</b>.</p><p><b>¿Se cumplió?</b></p>';
+    h += '<div class="chips">';
+    ['Sí, se cumplió', 'Más o menos', 'No, ocurrió otra cosa'].forEach(function (o) { h += '<button class="chip" data-act="answer" data-v="' + o + '">' + o + '</button>'; });
+    h += '</div></div><p class="muted">Tu respuesta se guarda como un dato nuevo para que el modelo aprenda de tu planta. Llevas <b>' + labels + '</b> respuesta' + (labels === 1 ? '' : 's') + ' en esta sesión.</p>';
+    return h;
+  }
+
+  // ---------- Render y eventos ----------
+  var TITLES = { plants: 'Mis plantas', add: 'Nueva planta', report: 'Reporte diario', result: 'Resultado', history: 'Historial', feedback: 'Seguimiento' };
+  var VIEWS = { plants: viewPlants, add: viewAdd, report: viewReport, result: viewResult, history: viewHistory, feedback: viewFeedback };
+  function render(keepScroll) {
+    $('#view').innerHTML = VIEWS[S.screen]();
+    $('#ttl').textContent = 'JardinerIA · ' + TITLES[S.screen];
+    var tab = { plants: 'plants', add: 'plants', feedback: 'plants', report: 'report', result: 'report', history: 'history' }[S.screen];
+    ['plants', 'report', 'history'].forEach(function (k) { var b = $('#n-' + k); if (k === tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    if (!keepScroll) window.scrollTo(0, 0);
+  }
+  function go(s) { S.screen = s; render(); }
+
+  var newSpecies = 'albahaca';
+  document.addEventListener('click', function (e) {
+    var g = e.target.closest('[data-go]');
+    if (g) { go(g.dataset.go); return; }
+    var el = e.target.closest('[data-act]');
+    if (!el) return;
+    var a = el.dataset.act;
+    if (a === 'open') { S.pid = +el.dataset.id; S.report = blank(); go('report'); }
+    else if (a === 'pick') { S.pid = +el.dataset.id; render(true); }
+    else if (a === 'addplant') { newSpecies = 'albahaca'; go('add'); }
+    else if (a === 'species') {
+      newSpecies = el.dataset.v;
+      document.querySelectorAll('[data-act="species"]').forEach(function (b) { b.setAttribute('aria-checked', b === el); });
+    }
+    else if (a === 'saveplant') {
+      var nm = $('#pn').value.trim() || ('Mi ' + SPECIES[newSpecies].name.toLowerCase());
+      plants.push({ id: nextId, name: nm, sp: newSpecies, days: 1, hist: [0], pending: null });
+      S.pid = nextId++; S.report = blank(); S.toast = 'Planta agregada. Haz su primer reporte.'; go('report');
+    }
+    else if (a === 'set') { S.report[el.dataset.f] = el.dataset.v; render(true); }
+    else if (a === 'analyze') { S.result = predict(plant(), S.report); go('result'); }
+    else if (a === 'save') {
+      var p = plant(); p.hist.push(S.result.estado); if (p.hist.length > 7) p.hist.shift();
+      p.days += 1; p.pending = { predicted: S.result.trend, answered: false };
+      S.toast = 'Reporte guardado. En 3 días te preguntaremos si la tendencia se cumplió.'; go('history');
+    }
+    else if (a === 'feedback') { S.pid = +el.dataset.id; go('feedback'); }
+    else if (a === 'answer') {
+      plant().pending.answered = true; labels += 1; S.toast = '¡Gracias! Guardamos tu respuesta como dato nuevo para el modelo.'; go('history');
+    }
+  });
+  document.addEventListener('input', function (e) {
+    var el = e.target; if (el.dataset.act !== 'range') return;
+    S.report[el.dataset.f] = +el.value;
+    $(el.dataset.f === 'sol' ? '#solv' : '#tmpv').textContent = el.value + (el.dataset.f === 'sol' ? ' h' : ' °C');
+  });
+  $('#themeBtn').addEventListener('click', function () {
+    var r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+    r.dataset.theme = dark ? 'light' : 'dark';
+  });
+  render();
+})();
+</script>
+</body>
+</html>
