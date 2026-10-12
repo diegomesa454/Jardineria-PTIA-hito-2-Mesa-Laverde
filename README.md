@@ -1,4 +1,4 @@
-# JardinerIA
+# Jardineria
 
 Proyecto del curso PTIA (Escuela Colombiana de Ingeniería Julio Garavito) — Grupo 02.
 
