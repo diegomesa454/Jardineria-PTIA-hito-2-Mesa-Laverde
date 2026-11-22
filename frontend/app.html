@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JardinerIA</title>
+<style>
+:root{--bg:#eef2ea;--card:#fff;--text:#1f2a1c;--muted:#5f6b5a;--line:#d9e0d3;--brand:#2f6b3a;--ok:#2e7d32;--okb:#e3f2e1;--warn:#a96a00;--warnb:#fff1d6;--bad:#b3261e;--badb:#fde4e1}
+@media(prefers-color-scheme:dark){:root{--bg:#11170f;--card:#1a2217;--text:#e8efe4;--muted:#a2b09c;--line:#2f3b2b;--brand:#7fc48a;--okb:#1f3522;--ok:#86d18b;--warnb:#3a2e14;--warn:#f0b955;--badb:#3d1f1c;--bad:#f2877f}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:16px/1.4 system-ui,"Segoe UI",sans-serif}
+header{background:var(--brand);color:#fff;padding:14px 16px;font-weight:700;font-size:18px}
+main{max-width:560px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:12px}
+h2{font-size:18px;margin:4px 0 10px}label{display:block;font-weight:600;margin:12px 0 4px}
+select,input{width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--text);font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px;background:var(--brand);color:#fff;font-weight:700;width:100%;margin-top:14px}
+button.sec{background:transparent;color:var(--brand);border:1px solid var(--line);margin-top:6px}
+.pill{display:inline-block;padding:3px 10px;border-radius:99px;font-weight:700;font-size:13px}
+.Saludable{background:var(--okb);color:var(--ok)}.Atención{background:var(--warnb);color:var(--warn)}.Crítico{background:var(--badb);color:var(--bad)}
+.planta{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid var(--line)}
+.planta:first-child{border-top:0}.muted{color:var(--muted);font-size:13px}.hide{display:none}
+.big{font-size:26px;font-weight:800;margin:4px 0}ol,ul{padding-left:20px;margin:6px 0}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.bar{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:2px 0 8px}.bar div{height:100%;background:var(--brand)}
+</style>
+</head>
+<body>
+<header>🌿 JardinerIA</header>
+<main>
+  <div id="aviso" class="card hide"></div>
+
+  <section id="vLista">
+    <div class="card"><h2>Mis plantas</h2><div id="lista" class="muted">Cargando…</div></div>
+    <div class="card"><h2>Agregar planta</h2>
+      <label for="nNombre">Nombre</label><input id="nNombre" placeholder="Ej.: Albahaca del balcón">
+      <div class="row">
+        <div><label for="nEsp">Especie</label><select id="nEsp"><option value="albahaca">Albahaca</option><option value="lechuga">Lechuga</option><option value="tomate_cherry">Tomate cherry</option></select></div>
+        <div><label for="nDias">Días desde la siembra</label><input id="nDias" type="number" min="0" value="30"></div>
+      </div>
+      <button onclick="crear()">Agregar</button>
+    </div>
+  </section>
+
+  <section id="vReporte" class="hide">
+    <div class="card"><h2 id="tReporte">Reporte de hoy</h2>
+      <label for="humedad">Humedad del sustrato</label><select id="humedad"><option>Seco</option><option selected>Húmedo</option><option>Encharcado</option></select>
+      <label for="color_hojas">Color de las hojas</label><select id="color_hojas"><option selected>Verde normal</option><option>Amarillas</option><option>Puntas marrones</option><option>Manchas</option></select>
+      <label for="turgencia">Turgencia</label><select id="turgencia"><option selected>Firme</option><option>Caída leve</option><option>Marchita</option></select>
+      <label for="riego_hoy">Riego de hoy</label><select id="riego_hoy"><option>No</option><option>Poco</option><option selected>Suficiente</option><option>Exceso</option></select>
+      <div class="row">
+        <div><label for="horas_sol">Horas de sol</label><input id="horas_sol" type="number" min="0" max="12" step="0.5" value="7"></div>
+        <div><label for="temperatura_c">Temperatura (°C)</label><input id="temperatura_c" type="number" min="-10" max="50" step="0.5" value="24"></div>
+      </div>
+      <label for="plagas">¿Ves plagas?</label><select id="plagas"><option selected>No</option><option>Sí</option></select>
+      <button onclick="enviar()">Obtener diagnóstico</button>
+      <button class="sec" onclick="volver()">Volver</button>
+    </div>
+  </section>
+
+  <section id="vResultado" class="hide">
+    <div class="card" id="resultado"></div>
+    <button class="sec" onclick="volver()">Volver a mis plantas</button>
+  </section>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+const CAMPOS = ["humedad","color_hojas","turgencia","riego_hoy","horas_sol","temperatura_c","plagas"];
+let actual = null;
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const vista = v => ["vLista","vReporte","vResultado"].forEach(x => $(x).classList.toggle("hide", x !== v));
+
+async function api(url, opciones) {
+  const r = await fetch(url, opciones && {headers:{"Content-Type":"application/json"}, ...opciones});
+  if (!r.ok) { let m = "Error " + r.status; try { m = JSON.stringify((await r.json()).detail); } catch(e){} throw new Error(m); }
+  return r.status === 204 ? null : r.json();
+}
+
+async function cargar() {
+  try {
+    const s = await api("/api/salud");
+    if (s.modo !== "modelo") { $("aviso").textContent = "Modo reglas: los modelos no están cargados, el diagnóstico usa solo la base de conocimiento."; $("aviso").classList.remove("hide"); }
+    const ps = await api("/api/plantas");
+    $("lista").innerHTML = ps.length ? ps.map(p => `<div class="planta"><div><b>${esc(p.nombre)}</b><div class="muted">${esc(p.especie.replace("_"," "))} · ${p.ultimo_reporte ? "último reporte " + p.ultimo_reporte : "sin reportes"}</div>
+      ${p.ultimo_estado ? `<span class="pill ${p.ultimo_estado}">${p.ultimo_estado}</span> <span class="muted">${esc(p.ultima_tendencia)}</span>` : ""}</div>
+      <div style="width:120px"><button style="margin:0" onclick="reportar(${p.id}, '${esc(p.nombre).replace(/'/g,"")}')">Reportar</button><button class="sec" onclick="borrar(${p.id})">Borrar</button></div></div>`).join("")
+      : "Aún no hay plantas. Agrega la primera abajo.";
+  } catch (e) { $("lista").textContent = "No se pudo conectar con el servicio: " + e.message; }
+}
+
+async function crear() {
+  const nombre = $("nNombre").value.trim();
+  if (!nombre) { $("nNombre").focus(); return; }
+  await api("/api/plantas", {method:"POST", body: JSON.stringify({nombre, especie:$("nEsp").value, dias_desde_siembra:+$("nDias").value || 0})});
+  $("nNombre").value = ""; cargar();
+}
+async function borrar(id) { if (confirm("¿Borrar la planta y su historial?")) { await api("/api/plantas/" + id, {method:"DELETE"}); cargar(); } }
+function reportar(id, nombre) { actual = id; $("tReporte").textContent = "Reporte de hoy · " + nombre; vista("vReporte"); }
+function volver() { vista("vLista"); cargar(); }
+
+async function enviar() {
+  const cuerpo = {};
+  CAMPOS.forEach(c => cuerpo[c] = ["horas_sol","temperatura_c"].includes(c) ? parseFloat($(c).value) : $(c).value);
+  try {
+    const d = await api(`/api/plantas/${actual}/reportes`, {method:"POST", body: JSON.stringify(cuerpo)});
+    const pr = d.probabilidades_estado;
+    $("resultado").innerHTML = `
+      <div class="muted">Estado de hoy</div><div class="big"><span class="pill ${d.estado}" style="font-size:20px">${d.estado}</span></div>
+      <div class="muted">Tendencia a 3 días: <b>${esc(d.tendencia_3_dias)}</b>${d.aviso_historial ? "<br>⚠️ " + esc(d.aviso_historial) : ""}</div>
+      ${pr ? "<h2 style='margin-top:14px'>Confianza del modelo</h2>" + Object.entries(pr).map(([k,v]) => `<div class="muted">${k}: ${Math.round(v*100)}%</div><div class="bar"><div style="width:${v*100}%"></div></div>`).join("") : ""}
+      <h2 style="margin-top:14px">Qué hacer</h2><ol>${d.acciones.map(a => `<li>${esc(a)}</li>`).join("")}</ol>
+      ${d.causas_probables.length ? "<h2>Por qué</h2><ul>" + d.causas_probables.map(c => `<li><b>${esc(c.causa)}.</b> ${esc(c.explicacion)}</li>`).join("") + "</ul>" : ""}
+      <div class="muted" style="margin-top:10px">Respuesta en ${d.tiempo_ms} ms · modo ${d.modo} · ${d.dias_de_historial} reporte(s) en el historial</div>`;
+    vista("vResultado");
+  } catch (e) { alert("No se pudo enviar el reporte: " + e.message); }
+}
+cargar();
+</script>
+</body>
+</html>
