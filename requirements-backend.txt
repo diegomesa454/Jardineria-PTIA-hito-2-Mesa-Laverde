@@ -1,0 +1,8 @@
+# Backend del Hito 3. Los modelos .joblib se entrenaron con scikit-learn 1.6.1 (la versión de Colab):
+# usar esa misma versión para cargarlos sin advertencias.
+-r requirements.txt
+scikit-learn==1.6.1
+joblib
+fastapi
+uvicorn
+httpx

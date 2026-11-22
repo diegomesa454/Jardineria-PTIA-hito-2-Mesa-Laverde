@@ -4,3 +4,8 @@ __pycache__/
 .ipynb_checkpoints/
 *.sqlite
 .env
+
+# Hito 3: los Random Forest pesan 54 y 114 MB (GitHub rechaza >100 MB). Se regeneran con
+# notebooks/hito3_comparacion_modelos.py o se comparten por fuera del repo.
+models/*.joblib
+!models/columnas_caracteristicas.joblib
